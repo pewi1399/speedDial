@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!-- saved from url=(0037)http://s.codepen.io/peWi/debug/pjYqom -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="google" value="notranslate">
+
+
+    <title>CodePen - Speedometer</title>
+<form id = "frm1" action="http://www.w3schools.com/html/action_page.php">
+  First name: <input type="number" name="fname" min="0" max="1" step="0.10" value="0.90"><br>
+  Last name: <input type="number" name="lname" min="0" max="1" step="0.10" value="0.90"><br><br>
+</form> 
+
+<button onclick="gg()">Try it</button>
+
+<p id="demo"></p>
+
+
+
+
+    
+    
+    
+        <style>
+      .chart-gauge {
+  width: 400px;
+  margin: 100px auto;
+}
+
+.chart-color1 {
+  fill: #28ED28;
+}
+
+.chart-color2 {
+  fill: #DEA82C;
+}
+
+.chart-color3 {
+  fill: #E9621A;
+}
+
+.chart-color4 {
+  fill: #e92213;
+}
+
+.needle,
+.needle-center {
+  fill: #464A4F;
+}
+
+.prose {
+  text-align: center;
+  font-family: sans-serif;
+  color: #ababab;
+}
+
+    </style>
+
+    
+    
+    
+  </head>
+
+  <body>
+
+    <div class="chart-gauge"></div>
+	
+    
+    <script src="d3.min.js"></script>
+
+        <script>
+      function gg() {
+  var Needle, arc, arcEndRad, arcStartRad, barWidth, chart, chartInset, degToRad, el, endPadRad, height, i, margin, needle, numSections, padRad, percToDeg, percToRad, percent, radius, ref, sectionIndx, sectionPerc, startPadRad, svg, totalPercent, width, fracA, fracB, fracC, fracAL, fracBL, fracCL, fracDL, lengths,lname, x;
+
+  x = document.getElementById("frm1")
+  
+  percent = x.elements[0].value;
+  
+  fracA = 0.20;
+  
+  fracB = 0.46;
+  
+  fracC = 0.65;
+  
+  fracAL = fracA;
+  
+  fracBL = fracB - fracA;
+ 
+  fracCL = fracC - fracB;
+  
+  fracDL = 1.00 -fracC;
+  
+  lengths = [fracAL, fracBL, fracCL, fracDL];
+  
+  barWidth = 40;
+
+  numSections = 4;
+
+  sectionPerc = 1 / numSections / 2;
+
+  padRad = 0.05;
+
+  chartInset = 10;
+
+  totalPercent = .75;
+
+  el = d3.select('.chart-gauge');
+
+  margin = {
+    top: 20,
+    right: 20,
+    bottom: 30,
+    left: 20
+  };
+
+  width = el[0][0].offsetWidth - margin.left - margin.right;
+
+  height = width;
+
+  radius = Math.min(width, height) / 2;
+
+  percToDeg = function(perc) {
+    return perc * 360;
+  };
+
+  percToRad = function(perc) {
+    return degToRad(percToDeg(perc));
+  };
+
+  degToRad = function(deg) {
+    return deg * Math.PI / 180;
+  };
+
+  svg = el.append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom);
+
+  chart = svg.append('g').attr('transform', "translate(" + ((width + margin.left) / 2) + ", " + ((height + margin.top) / 2) + ")");
+
+  for (sectionIndx = i = 1, ref = numSections; 1 <= ref ? i <= ref : i >= ref; sectionIndx = 1 <= ref ? ++i : --i) {
+    arcStartRad = percToRad(totalPercent);
+    arcEndRad = arcStartRad + percToRad(lengths[i-1]/2);/*sectionperc needs to change according to particular value*/
+    totalPercent += lengths[i-1]/2;
+    startPadRad = sectionIndx === 0 ? 0 : padRad / 2 ;
+    endPadRad = sectionIndx === numSections ? 0 : padRad / 2;
+    arc = d3.svg.arc().outerRadius(radius - chartInset).innerRadius(radius - chartInset - barWidth).startAngle(arcStartRad + startPadRad).endAngle(arcEndRad - endPadRad);
+    chart.append('path').attr('class', "arc chart-color" + sectionIndx).attr('d', arc);
+	chart.append("text")
+      .attr("x", radius - chartInset)
+      .attr("y", arcStartRad*16)
+      .attr("dy", ".35em")
+      .text(lengths[i-1]);
+  }
+
+chart.append("text")
+      .attr("x", 100)
+      .attr("y", 0)
+      .attr("dy", ".35em")
+      .text(x.elements[0].value);
+
+chart.append("text")
+      .attr("x", 0)
+      .attr("y", 100)
+      .attr("dy", ".35em")
+      .text("0.100");	  
+	  
+chart.append("text")
+      .attr("x", 100)
+      .attr("y", 100)
+      .attr("dy", ".35em")
+      .text("100.100");
+	  
+chart.append("text")
+      .attr("x", -100)
+      .attr("y", -100)
+      .attr("dy", ".35em")
+      .text("-100.-100");
+	    
+chart.append("text")
+      .attr("x", -100)
+      .attr("y", 0)
+      .attr("dy", ".35em")
+      .text("-100.0");
+	  
+chart.append("text")
+      .attr("x", 0)
+      .attr("y", -100)
+      .attr("dy", ".35em")
+      .text("0.-100");
+
+chart.append("text")
+      .attr("x", -100)
+      .attr("y", 100)
+      .attr("dy", ".35em")
+      .text("-100.100");	
+
+chart.append("text")
+      .attr("x", 100)
+      .attr("y", -100)
+      .attr("dy", ".35em")
+      .text("100.-100");		  
+	     
+	  
+  Needle = (function() {
+    function Needle(len, radius1) {
+      this.len = len;
+      this.radius = radius1;
+    }
+
+    Needle.prototype.drawOn = function(el, perc) {
+      el.append('circle').attr('class', 'needle-center').attr('cx', 0).attr('cy', 0).attr('r', this.radius);
+      return el.append('path').attr('class', 'needle').attr('d', this.mkCmd(perc));
+    };
+
+    Needle.prototype.animateOn = function(el, perc) {
+      var self;
+      self = this;
+      return el.transition().delay(500).ease('elastic').duration(3000).selectAll('.needle').tween('progress', function() {
+        return function(percentOfPercent) {
+          var progress;
+          progress = percentOfPercent * perc;
+          return d3.select(this).attr('d', self.mkCmd(progress));
+        };
+      });
+    };
+
+    Needle.prototype.mkCmd = function(perc) {
+      var centerX, centerY, leftX, leftY, rightX, rightY, thetaRad, topX, topY;
+      thetaRad = percToRad(perc / 2);
+      centerX = 0;
+      centerY = 0;
+      topX = centerX - this.len * Math.cos(thetaRad);
+      topY = centerY - this.len * Math.sin(thetaRad);
+      leftX = centerX - this.radius * Math.cos(thetaRad - Math.PI / 2);
+      leftY = centerY - this.radius * Math.sin(thetaRad - Math.PI / 2);
+      rightX = centerX - this.radius * Math.cos(thetaRad + Math.PI / 2);
+      rightY = centerY - this.radius * Math.sin(thetaRad + Math.PI / 2);
+      return "M " + leftX + " " + leftY + " L " + topX + " " + topY + " L " + rightX + " " + rightY;
+    };
+
+    return Needle;
+
+  })();
+
+  needle = new Needle(90, 15);
+
+  needle.drawOn(chart, 0);
+
+  needle.animateOn(chart, percent);
+
+};
+      //@ sourceURL=pen.js
+    </script>
+
+    
+    
+    
+  
+
+ 
+</body></html>
